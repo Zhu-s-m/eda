@@ -1,0 +1,156 @@
+---
+title: "Community Contribution"
+author: '[Simu Zhu, Lin Zhu]'
+execute:
+  echo: true
+  warning: false
+format:
+  html:
+    fig-width: 7
+    fig-height: 4
+    out-width: 60%
+    embed-resources: true
+---
+
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+### 3. Spider/rader graph
+
+When we wish to concentrate on a single entity or individual's data, especially when it involves multiple dimensions and attributes, a spider/radar graph proves to be a valuable choice. This type of graph is particularly useful for performance evaluation or assessment as it aids in evaluating the strengths and weaknesses of individuals or entities by visually representing their performance in various areas.
+
+Source:
+https://r-graph-gallery.com/142-basic-radar-chart.html
+https://www.datanovia.com/en/blog/beautiful-radar-chart-in-r-using-fmsb-and-ggplot-packages/
+https://r-charts.com/ranking/radar-chart/
+
+```{r Demo data}
+# Demo data
+exam_scores <- data.frame(
+    row.names = c("Student.1", "Student.2", "Student.3"),
+      Maths = c(9.9, 5.9, 15.8),
+      Programming = c(0, 0, 20),
+      Physics = c(12, 20, 0),
+      English = c(7.9, 7.2, 12.4),
+      Art = c(2.4, 0.2, 9.8),
+      Sport = c(20, 20, 4)
+)
+exam_scores
+```
+
+To use fmsb package, I have to add two rows at the beginning of original dataset, that is maximum and minimum for each variable.
+
+```{r Define max and min}
+# Define maximum and minimum values for each variable
+max_min <- data.frame(
+  Maths = c(20, 0), Programming = c(20, 0), Physics = c(20, 0),
+  English = c(20, 0), Art = c(20, 0), Sport = c(20, 0)
+)
+rownames(max_min) <- c("Max", "Min")
+# Add max and min rows at the begining of exam_score data
+df <- rbind(max_min, exam_scores)
+df
+```
+
+
+```{r Plot spider/rader graph}
+# Install fmsb package
+library(fmsb)
+radarchart(df)
+```
+```{r Customize spider/rader }
+# Customize the radar charts
+# Fill areas
+areas <- c(rgb(1, 0, 0, 0.25),  
+           rgb(0, 1, 0, 0.25),
+           rgb(0, 0, 1, 0.25))
+
+radarchart(df,
+           cglty = 1,       # Grid line type
+           cglcol = "gray", # Grid line color
+           pcol = 2:4,      # Color for each line
+           plwd = 2,        # Width for each line
+           plty = 1,        # Line type for each line
+           pfcol = areas,   # Color of the areas
+           vlcex=0.75)
+
+# Add legend
+legend("topright",
+       legend = paste("Student", 1:3),
+       bty = "n", pch = 20, col = areas,
+       text.col = "grey25", pt.cex = 2)
+```
+Installation:
+Remember to install devtools package first and the use below code to install ggradar
+Use code: devtools::install_github("ricardo-bion/ggradar")
+
+```{r Spider/rader_using ggplot2}
+library("ggradar")
+library(tidyverse)
+# Put row names into a column named Student
+df2 <- exam_scores %>% rownames_to_column("Student")
+df2
+```
+
+```{r Plot spider/rader_using ggplot2}
+ggradar(
+  df2, 
+  values.radar = c("0", "10", "20"),
+  grid.min = 0, grid.mid = 10, grid.max = 20
+  )
+```
+
+```{r Customize spider/rader_using ggplot2}
+ggradar(
+  df2, 
+  values.radar = c("0", "10", "20"),
+  grid.min = 0, grid.mid = 10, grid.max = 20,
+  # Polygons
+  group.line.width = 1, 
+  group.point.size = 3,
+  group.colours = c("#00AFBB", "#E7B800", "#FC4E07"),
+  # Background and grid lines
+  background.circle.colour = "white",
+  gridline.mid.colour = "grey",
+  legend.position = "bottom"
+  )
+```
+### 4. Wordcloud
+
+When our focus is on a specific data type, that is words, a wordcloud can be particularly advantageous for content analysis. It enables the swift identification of keywords or themes.
+
+https://r-graph-gallery.com/196-the-wordcloud2-library.html
+https://cran.r-project.org/web/packages/ggwordcloud/vignettes/ggwordcloud.html
+
+```{r Wordcloud}
+# Install wordcloud2 package
+library(wordcloud2)
+wordcloud2(data=demoFreq)
+```
+
+
+
+```{r Customize wordcloud}
+# Chaneg size, shape
+wordcloud2(demoFreq, size = 0.6, shape = 'star')
+```
+
+```{r Wordcloud using ggplot}
+library(ggwordcloud)
+ggplot(demoFreq[1:100,], aes(label = word, size = freq)) +
+  geom_text_wordcloud() +
+  theme_minimal()
+```
+
+```{r Customize wordcloud using ggplot}
+ggplot(demoFreq[1:100,],aes(label = word, 
+                            size = freq,
+                            color = freq
+                            )
+       ) +
+  geom_text_wordcloud_area(shape = "star") +
+  scale_size_area(max_size = 10) +
+  theme_minimal()
+```
