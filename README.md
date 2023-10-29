@@ -1,1 +1,2 @@
 # eda
+After compiling our knowledge of ranking visualization (parallel,cleveland_dot_plot, bar plot), we discovered that, in certain scenarios like multidimensional ranking and minority entity ranking, the visualizations we have acquired are insufficient in displaying the relationships clearly. To address these unique issues, we explored 2 ranking visualization techniques. One is designing dynamic barplots, the other is using spider plots to compare each entity. 
