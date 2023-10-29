@@ -16,6 +16,7 @@ When you click the **Render** button a document will be generated that includes 
 library(tidyverse)
 library(ggplot2)
 library(plotly)
+
 gdp_tidy <- read_csv("../eda/data/gdp_tidy.csv")
 
 gdp_formatted <- gdp_tidy %>%
