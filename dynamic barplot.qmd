@@ -1,0 +1,59 @@
+---
+title: "barplot"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+gdp_tidy <- read_csv("C:/Users/Zh_uu/Desktop/zhu的文件硕士/EDA/eda/gdp_tidy.csv")
+
+gdp_formatted <- gdp_tidy %>%
+  group_by(year) %>%
+  # The * 1 makes it possible to have non-integer ranks while sliding
+  mutate(rank = rank(-value),
+         Value_rel = value/value[rank==1],
+         Value_lbl = paste0(" ",round(value/1e9))) %>%
+  group_by(country_name) %>% 
+  filter(rank <=10) %>%
+  ungroup()
+View(gdp_formatted)
+
+ggplot(gdp_formatted,aes(country_name,value/2))+
+  geom_bar(stat="identity")+
+  facet_grid(.~year)+
+  scale_x_discrete(guide = guide_axis(angle = 90,n.dodge=2))
+
+gdp2=gdp_formatted[gdp_formatted$country_name %in% c("United States", "China", "Japan", "Germany", "France", "United Kingdom", "Italy","India"), ]
+ggplot(gdp2,aes(year,rank))+
+  geom_bar(stat="identity")+
+  facet_grid(.~country_name)+
+  theme(axis.text.x = element_text(size=5, vjust = 0.5, hjust = 0.5, angle = 45))+
+  scale_y_continuous(breaks=seq(1,10,2))
+
+
+staticplot = ggplot(gdp_formatted, aes(rank, group = country_name,
+                fill = as.factor(country_name), color = as.factor(country_name),
+                frame = year)) +
+  geom_tile(aes(y = value/2,
+                height = value,
+                width = 0.9), alpha = 0.8, color = NA) +
+  geom_text(aes(y = value, label = country_name,size=1,vjust = 0.5, hjust =0.5))+
+  coord_flip(clip = "off", expand = FALSE) +
+  scale_y_continuous(labels = scales::scientific) +
+  ggtitle("TOP10 country in GDP afrom 1990 to 2016")+
+  scale_x_reverse()
+ggplotly(staticplot)
+```
+
+You can add options to executable code like this
