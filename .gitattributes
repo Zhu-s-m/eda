@@ -1,0 +1,3 @@
+*.Rmd linguist-language=r
+*.qmd linguist-language=r
+*.Rproj linguist-language=r
